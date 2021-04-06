@@ -1,4 +1,6 @@
 .git
 Dockerfile
-*~
 README.md
+*.json
+LICENSE
+.gitignore

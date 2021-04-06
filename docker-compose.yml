@@ -1,0 +1,24 @@
+version: '3.2'
+
+services:
+
+    speedtest:
+      container_name: speedtest
+      build:
+        context: speedtest
+        dockerfile: Dockerfile
+      restart: unless-stopped
+      environment:
+        INFLUX_DB_ADDRESS: <INFLUX IP OR HOSTNAME>
+        INFLUX_DB_PORT: 8086
+        INFLUX_DB_ORG: <INFLUXDB ORG>
+        INFLUX_DB_TOKEN: <INSERT BUCKET TOKEN>
+        INFLUX_DB_DATABASE: speedtests
+        SPEEDTEST_INTERVAL: 10
+        SPEEDTEST_FAIL_INTERVAL: 5
+        PING_INTERVAL: 60
+        TZ: Europe/London
+      logging:
+        driver: json-file
+        options:
+          max-size: 10m

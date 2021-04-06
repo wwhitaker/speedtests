@@ -1,16 +1,30 @@
-# Speedtest to InfluxDB
+# Speedtest to InfluxDB v2.0
 
 This is a Python script that will continuously run the official Speedtest CLI application by Ookla, takes input from environment variables, formats data and writes it to an InfluxDB database.
 
-This script will allow you to measure your internet connections speed and consistency over time. It uses env variables as configuration. It's as easy to use as telling your Docker server a 1 line command and you'll be set. Using Grafana you can start exploring this data easily. 
+This script will allow you to measure your internet connections speed and consistency over time. It uses env variables as configuration. It's as easy to use as telling your Docker server a 1 line command and you'll be set. Using Grafana you can start exploring this data easily.
 
-I built a Grafana dashboard which has been exported into this repo as `GrafanaDash-SpeedTests.json` to import into Grafana for your convenience.
+This repository contains an InfluxQA based Grafana dashboard `GrafanaDash-SpeedTests.json` configuration. To make use of this please follow the InfluxDB guide for managing Grafana and InfluxQL data sources [here](https://docs.influxdata.com/influxdb/v2.0/tools/grafana/?t=InfluxQL).
 
 ![GrafanaDashboard](https://user-images.githubusercontent.com/945191/105287048-46f52a80-5b6c-11eb-9e57-038d63b67efb.png)
 
-There are some added features to allow some additional details that Ookla provides as tags on your data. Some examples are your current ISP, the interface being used, the server who hosted the test. Overtime, you could identify if some serers are performing better than others. 
+There are some added features to allow some additional details that Ookla provides as tags on your data. Some examples are your current ISP, the interface being used, the server who hosted the test. Overtime, you could identify if some serers are performing better than others.
 
-## Configuring the script
+## Acknowledgements
+This work is based upon forks from:
+
+- [Qlustor](https://github.com/qlustor/speedtest_ookla-to-influxdb)
+- [breadlysm](https://github.com/breadlysm/speedtest-to-influxdb)
+- [Martin Francois](https://github.com/martinfrancois/speedtest-to-influxdb)
+- [Aiden Gilmartin](https://github.com/aidengilmartin/speedtest-to-influxdb)
+
+My modifications port their hard work to InfluxDB v2.0 and higher.
+
+## Preparing InfluxDB
+Before configuring the speedtest container you must prepare a `speedtests` data [bucket](https://docs.influxdata.com/influxdb/v2.0/organizations/buckets/create-bucket/) and bucket token.
+
+Also follow the additional instructions for using Grafana with [InfluxQL](https://docs.influxdata.com/influxdb/v2.0/tools/grafana/?t=InfluxQL).
+## Configuring the container
 
 The InfluxDB connection settings are controlled by environment variables.
 
@@ -18,8 +32,8 @@ The variables available are:
 - NAMESPACE = default - None
 - INFLUX_DB_ADDRESS = default - influxdb
 - INFLUX_DB_PORT = default - 8086
-- INFLUX_DB_USER = default - {blank}
-- INFLUX_DB_PASSWORD = default - {blank}
+- INFLUX_DB_ORG = default - {blank}
+- INFLUX_DB_TOKEN = default - {blank}
 - INFLUX_DB_DATABASE = default - speedtests
 - INFLUX_DB_TAGS = default - None * See below for options, '*' widcard for all *
 - SPEEDTEST_INTERVAL = default - 5 (minutes)
@@ -29,12 +43,12 @@ The variables available are:
 
 ### Variable Notes
 - Intervals are in minutes. *Script will convert it to seconds.*
-- If any variables are not needed, don't declare them. Functions will operate with or without most variables. 
+- If any variables are not needed, don't declare them. Functions will operate with or without most variables.
 - Tags should be input without quotes. *INFLUX_DB_TAGS = isp, interface, external_ip, server_name, speedtest_url*
 - NAMESPACE is used to collect data from multiple instances of the container into one database and select which you wish to view in Grafana. i.e. I have one monitoring my Starlink, the other my TELUS connection.
-  
+
 ### Tag Options
-The Ookla speedtest app provides a nice set of data beyond the upload and download speed. The list is below. 
+The Ookla speedtest app provides a nice set of data beyond the upload and download speed. The list is below.
 
 | Tag Name 	| Description 	|
 |-	|-	|
@@ -59,11 +73,11 @@ Be aware that this script will automatically accept the license and GDPR stateme
 
 ## Running the Script
 
-### Ideal option, run as a Docker container. 
+### Ideal option, run as a Docker container.
 
 1. Build the container.
 
-    `docker build -t qlustor/speedtest_ookla-to-influxdb ./`
+    `docker build -t speedtest -f Dockerfile .`
 
 2. Run the container.
     ```
@@ -71,13 +85,17 @@ Be aware that this script will automatically accept the license and GDPR stateme
     -e 'NAMESPACE'='None' \
     -e 'INFLUX_DB_ADDRESS'='influxdb' \
     -e 'INFLUX_DB_PORT'='8086' \
-    -e 'INFLUX_DB_USER'='_influx_user_' \
-    -e 'INFLUX_DB_PASSWORD'='_influx_pass_' \
+    -e 'INFLUX_DB_ORG' = 'my-org' \
+    -e 'INFLUX_DB_TOKEN'='_influx_bucket_token_' \
     -e 'INFLUX_DB_DATABASE'='speedtests' \
     -e 'SPEEDTEST_INTERVAL'='5' \
     -e 'SPEEDTEST_FAIL_INTERVAL'='5'  \
     -e 'SPEEDTEST_SERVER_ID'='12746' \
     qlustor/speedtest_ookla-to-influxdb
     ```
+### Run as docker-compose
+1. Configure the supplied `docker-compose.yml` file environment variables
+2. Run `docker-compose up -d` to build the stack
+3. Run `docker-compose down` to destroy the stack
 
-This script looks to have been originally written by https://github.com/aidengilmartin/speedtest-to-influxdb/blob/master/main.py and I forked it from https://github.com/breadlysm/speedtest-to-influxdb. They did the hard work, I've continued to modify it though to fit my needs.
+You may also run InfluxDB as a container in the same stack. Setting the InfluxDB `container_name` will allow the speedtest container to communicate via hostnames.
