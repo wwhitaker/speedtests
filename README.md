@@ -19,10 +19,10 @@ This work is based upon forks from:
 - [Martin Francois](https://github.com/martinfrancois/speedtest-to-influxdb)
 - [Aiden Gilmartin](https://github.com/aidengilmartin/speedtest-to-influxdb)
 
-My modifications port their hard work to InfluxDB v2.0 and higher.
+I have been a long time fan and user of this tool, primarily the docker container from [breadlysm](https://github.com/breadlysm/speedtest-to-influxdb).  As such, I had a long history of data to migrate to a new InfluxDB2 server.  Coupled with a desire for a multi-architecture container (amd64 and arm64) this repository was started.
 
 ## Preparing InfluxDB
-Before configuring the speedtest container you must prepare a `speedtests` data [bucket](https://docs.influxdata.com/influxdb/v2.0/organizations/buckets/create-bucket/) and bucket token.
+Before configuring the speedtest container you must prepare a `speedtests` data [bucket](https://docs.influxdata.com/influxdb/v2.0/organizations/buckets/create-bucket/) and API token.
 
 Also follow the additional instructions for using Grafana with [InfluxQL](https://docs.influxdata.com/influxdb/v2.0/tools/grafana/?t=InfluxQL).
 
@@ -86,8 +86,6 @@ docker pull ghcr.io/wwhitaker/speedtests:latest
 You may also run InfluxDB as a container in the same stack. Setting the InfluxDB `container_name` will allow the speedtest container to communicate via hostnames.
 
 ## Migrate InfluxDB v1 to v2
-I created this repository and container to move from old InfluxDB v1.8 to modern InfluxDB v2.
-I have been a long time user of [breadlysm](https://github.com/breadlysm/speedtest-to-influxdb)'s SpeedFlux work and wanted to maintain my long history of data.
 Various methods exist to migrate data, but the simple approach below worked for me.
 
 1. From the InfluxDB v1 server, export speedtests data to a line protocol file. 
