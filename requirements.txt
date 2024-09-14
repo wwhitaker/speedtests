@@ -1,2 +1,2 @@
-influxdb-client==1.16.0
-pythonping==1.0.16
+influxdb-client==1.46.0
+pythonping==1.1.4
