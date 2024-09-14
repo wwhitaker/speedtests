@@ -71,6 +71,12 @@ The Ookla speedtest app provides a nice set of data beyond the upload and downlo
 ### Additional Notes
 Be aware that this script will automatically accept the license and GDPR statement so that it can run non-interactively. Make sure you agree with them before running.
 
+## Docker
+The container image is available through GitHub Containers.  Builds for amd64 and arm64 are included.
+```shell
+docker pull ghcr.io/wwhitaker/speedtests:latest
+```
+
 ## Running the Script
 
 ### Ideal option, run as a Docker container.
@@ -81,7 +87,7 @@ Be aware that this script will automatically accept the license and GDPR stateme
 
 2. Run the container.
     ```
-    docker run -d -t --name speedflux \
+    docker run -d -t --name speedtests \
     -e 'NAMESPACE'='None' \
     -e 'INFLUX_DB_ADDRESS'='influxdb' \
     -e 'INFLUX_DB_PORT'='8086' \
@@ -99,3 +105,16 @@ Be aware that this script will automatically accept the license and GDPR stateme
 3. Run `docker-compose down` to destroy the stack
 
 You may also run InfluxDB as a container in the same stack. Setting the InfluxDB `container_name` will allow the speedtest container to communicate via hostnames.
+
+## Migrate InfluxDB from v1 to v2
+If you need to move data from an InfluxDB v1
+
+1. From the InfluxDB v1 server, export speedtests data to a line protocol file. 
+    ```shell
+    influx_inspect export -datadir /var/lib/influxdb/data -waldir /var/lib/influxdb/wal -database speedtests -out speedtests.lp -lponly
+    ```
+2. Copy the speedtests.lp file to the InfluxDB2 server.
+3. Import speedtests data into the speedtests bucket.
+    ```shell
+    influx write --bucket speedtests --file speedtests.lp
+    ```
