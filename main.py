@@ -1,4 +1,4 @@
-import datetime
+# import datetime
 import json
 import os
 import subprocess
@@ -195,7 +195,7 @@ def speedtest():
 
 
 def pingtest():
-    timestamp = datetime.datetime.utcnow()
+    # timestamp = datetime.datetime.utcnow()
     for target in PING_TARGETS.split(","):
         target = target.strip()
         pingtest = ping(target, verbose=False, timeout=1, count=1, size=128)
