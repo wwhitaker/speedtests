@@ -1,9 +1,9 @@
 FROM python:3.11-slim-bookworm
 LABEL maintainer="speedtests@email.defingo.net"
-LABEL org.opencontainers.image.description "Original by Aiden Gilmartin. Speedtest to InfluxDB2 data bridge" 
-LABEL org.opencontainers.image.source https://github.com/wwhitaker/speedtests
+LABEL org.opencontainers.image.description="Original by Aiden Gilmartin. Speedtest to InfluxDB2 data bridge" 
+LABEL org.opencontainers.image.source=https://github.com/wwhitaker/speedtests
 
-ENV DEBIAN_FRONTEND noninteractive
+ENV DEBIAN_FRONTEND=noninteractive
 
 # Install dependencies
 RUN apt-get update 
