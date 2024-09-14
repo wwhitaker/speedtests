@@ -1,7 +1,8 @@
 services:
     speedtest:
-      #build: .
-      image: speedtests:latest
+      # build: .
+      # image: speedtests:latest
+      image: ghcr.io/wwhitaker/speedtests:latest
       restart: unless-stopped
       environment:
         INFLUX_DB_ADDRESS: ${INFLUX_DB_ADDRESS}
