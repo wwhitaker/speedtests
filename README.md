@@ -13,6 +13,7 @@ There are some added features to allow some additional details that Ookla provid
 ## Acknowledgements
 This work is based upon forks from:
 
+- [davidtaddei](https://github.com/davidtaddei/speedtest_ookla-to-influxdbv2)
 - [Qlustor](https://github.com/qlustor/speedtest_ookla-to-influxdb)
 - [breadlysm](https://github.com/breadlysm/speedtest-to-influxdb)
 - [Martin Francois](https://github.com/martinfrancois/speedtest-to-influxdb)
@@ -24,8 +25,8 @@ My modifications port their hard work to InfluxDB v2.0 and higher.
 Before configuring the speedtest container you must prepare a `speedtests` data [bucket](https://docs.influxdata.com/influxdb/v2.0/organizations/buckets/create-bucket/) and bucket token.
 
 Also follow the additional instructions for using Grafana with [InfluxQL](https://docs.influxdata.com/influxdb/v2.0/tools/grafana/?t=InfluxQL).
-## Configuring the container
 
+## Configuring the container
 The InfluxDB connection settings are controlled by environment variables.
 
 The variables available are:
@@ -77,37 +78,17 @@ The container image is available through GitHub Containers.  Builds for amd64 an
 docker pull ghcr.io/wwhitaker/speedtests:latest
 ```
 
-## Running the Script
-
-### Ideal option, run as a Docker container.
-
-1. Build the container.
-
-    `docker build -t speedtest -f Dockerfile .`
-
-2. Run the container.
-    ```
-    docker run -d -t --name speedtests \
-    -e 'NAMESPACE'='None' \
-    -e 'INFLUX_DB_ADDRESS'='influxdb' \
-    -e 'INFLUX_DB_PORT'='8086' \
-    -e 'INFLUX_DB_ORG' = 'my-org' \
-    -e 'INFLUX_DB_TOKEN'='_influx_bucket_token_' \
-    -e 'INFLUX_DB_DATABASE'='speedtests' \
-    -e 'SPEEDTEST_INTERVAL'='5' \
-    -e 'SPEEDTEST_FAIL_INTERVAL'='5'  \
-    -e 'SPEEDTEST_SERVER_ID'='12746' \
-    qlustor/speedtest_ookla-to-influxdb
-    ```
-### Run as docker-compose
+## Docker Compose
 1. Configure the supplied `docker-compose.yml` file environment variables
 2. Run `docker-compose up -d` to build the stack
 3. Run `docker-compose down` to destroy the stack
 
 You may also run InfluxDB as a container in the same stack. Setting the InfluxDB `container_name` will allow the speedtest container to communicate via hostnames.
 
-## Migrate InfluxDB from v1 to v2
-If you need to move data from an InfluxDB v1
+## Migrate InfluxDB v1 to v2
+I created this repository and container to move from old InfluxDB v1.8 to modern InfluxDB v2.
+I have been a long time user of [breadlysm](https://github.com/breadlysm/speedtest-to-influxdb)'s SpeedFlux work and wanted to maintain my long history of data.
+Various methods exist to migrate data, but the simple approach below worked for me.
 
 1. From the InfluxDB v1 server, export speedtests data to a line protocol file. 
     ```shell
