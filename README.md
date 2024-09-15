@@ -40,7 +40,7 @@ The variables available are:
 - INFLUX_DB_ORG = default - {blank}
 - INFLUX_DB_TOKEN = default - {blank}
 - INFLUX_DB_DATABASE = default - speedtests
-- INFLUX_DB_TAGS = default - None *See below for options, '*' widcard for all *
+- INFLUX_DB_TAGS = default - None *See below for options, '\*' widcard for all*
 - SPEEDTEST_INTERVAL = default - 5 (minutes)
 - SPEEDTEST_FAIL_INTERVAL = default 5 (minutes)
 - SPEEDTEST_SERVER_ID = default - {blank} *id from [Speedtest Static Servers](https://c.speedtest.net/speedtest-servers-static.php)*
