@@ -39,19 +39,17 @@ The variables available are:
 | NAMESPACE | None | |
 | INFLUX_DB_ADDRESS | influxdb | |
 | INFLUX_DB_PORT | 8086 | |
-| INFLUX_DB_ORG | {blank} | |
-| INFLUX_DB_TOKEN | {blank} | |
-| INFLUX_DB_DATABASE | speedtests | |
+| INFLUX_DB_ORG | {blank} | required |
+| INFLUX_DB_BUCKET | speedtests | |
+| INFLUX_DB_TOKEN | {blank} | required |
 | INFLUX_DB_TAGS | None | See tag options below, '\*' widcard for all |
 | SPEEDTEST_INTERVAL | 5 | in minutes |
-| SPEEDTEST_FAIL_INTERVAL | 5 | in minutes |
 | SPEEDTEST_SERVER_ID | {blank} | id from [Speedtest Static Servers](https://c.speedtest.net/speedtest-servers-static.php) |
 | PING_INTERVAL | 5 | in seconds |
-| PING_TARGETS | 1.1.1.1, 8.8.8.8 | (csv of hosts to ping) |
+| PING_TARGETS | 1.1.1.1, 8.8.8.8 | csv list of hosts to ping |
 
 ### Variable Notes
 
-- Intervals are in minutes. *Script will convert it to seconds.*
 - If any variables are not needed, don't declare them. Functions will operate with or without most variables.
 - Tags should be input without quotes. *INFLUX_DB_TAGS = isp, interface, external_ip, server_name, speedtest_url*
 - NAMESPACE is used to collect data from multiple instances of the container into one database and select which you wish to view in Grafana. i.e. I have one monitoring my Starlink, the other my TELUS connection.

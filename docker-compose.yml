@@ -8,8 +8,8 @@ services:
         INFLUX_DB_ADDRESS: ${INFLUX_DB_ADDRESS}
         INFLUX_DB_PORT: 8086
         INFLUX_DB_ORG: ${INFLUX_DB_ORG}
+        INFLUX_DB_BUCKET: speedtests
         INFLUX_DB_TOKEN: ${INFLUX_DB_TOKEN}
-        INFLUX_DB_DATABASE: speedtests
         INFLUX_DB_TAGS: '*'
         SPEEDTEST_INTERVAL: 10
         SPEEDTEST_FAIL_INTERVAL: 5

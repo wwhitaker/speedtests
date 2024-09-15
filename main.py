@@ -15,15 +15,13 @@ DB_ADDRESS = os.getenv("INFLUX_DB_ADDRESS", "influxdb")
 DB_PORT = int(os.getenv("INFLUX_DB_PORT", "8086"))
 DB_ORG = os.getenv("INFLUX_DB_ORG", "")
 DB_TOKEN = os.getenv("INFLUX_DB_TOKEN", "")
-DB_DATABASE = os.getenv("INFLUX_DB_DATABASE", "speedtests")
+DB_BUCKET = os.getenv("INFLUX_DB_BUCKET", "speedtests")
 DB_TAGS = os.getenv("INFLUX_DB_TAGS", None)
 PING_TARGETS = os.getenv("PING_TARGETS", "1.1.1.1, 8.8.8.8")
 
 # Speedtest Settings
 # Time between tests (in minutes, converts to seconds).
 TEST_INTERVAL = int(os.getenv("SPEEDTEST_INTERVAL", "5")) * 60
-# Time before retrying a failed Speedtest (in minutes, converts to seconds).
-TEST_FAIL_INTERVAL = int(os.getenv("SPEEDTEST_FAIL_INTERVAL", "5")) * 60
 # Specific server ID
 SERVER_ID = os.getenv("SPEEDTEST_SERVER_ID", "")
 # Time between ping tests (in seconds).
@@ -35,17 +33,6 @@ client = InfluxDBClient(
 
 write_api = client.write_api(write_options=SYNCHRONOUS)
 query_api = client.query_api()
-
-# def init_db():
-#    databases = query_api.get_list_database()
-
-#    if len(list(filter(lambda x: x['name'] == DB_DATABASE, databases))) == 0:
-#        influxdb_client.create_database(
-#            DB_DATABASE)  # Create if does not exist.
-#    else:
-# Switch to if does exist.
-#        influxdb_client.switch_database(DB_DATABASE)
-
 
 def pkt_loss(data):
     if "packetLoss" in data.keys():
@@ -183,15 +170,12 @@ def speedtest():
             + ")"
         )
         data = format_for_influx(data_json)
-        write_api.write(bucket="speedtests", record=data)
+        write_api.write(bucket=DB_BUCKET, record=data)
         print("Data written to DB successfully")
     else:  # Speedtest failed.
         print("Speedtest Failed :")
         print(speedtest.stderr)
         print(speedtest.stdout)
-
-
-#        time.sleep(TEST_FAIL_INTERVAL)
 
 
 def pingtest():
@@ -213,7 +197,7 @@ def pingtest():
             .tag("namespace", NAMESPACE)
             .tag("target", target)
         )
-        write_api.write(bucket="speedtests", record=data)
+        write_api.write(bucket=DB_BUCKET, record=data)
 
 
 def main():
@@ -222,25 +206,25 @@ def main():
 
     # init_db()  # Setup the database if it does not already exist.
 
-    loopcount = 0
+    loop_count = 0
     while 1:  # Run a Speedtest and send the results to influxDB indefinitely.
-        if loopcount == 0 or loopcount % PING_INTERVAL == 0:
+        if loop_count == 0 or loop_count % PING_INTERVAL == 0:
             if pPing.is_alive():
                 pPing.terminate()
             pPing = Process(target=pingtest)
             pPing.start()
 
-        if loopcount == 0 or loopcount % TEST_INTERVAL == 0:
+        if loop_count == 0 or loop_count % TEST_INTERVAL == 0:
             if pSpeed.is_alive():
                 pSpeed.terminate()
             pSpeed = Process(target=speedtest)
             pSpeed.start()
 
-        if loopcount % (PING_INTERVAL * TEST_INTERVAL) == 0:
-            loopcount = 0
+        if loop_count % (PING_INTERVAL * TEST_INTERVAL) == 0:
+            loop_count = 0
 
         time.sleep(1)
-        loopcount += 1
+        loop_count += 1
 
 
 if __name__ == "__main__":
