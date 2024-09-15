@@ -43,9 +43,9 @@ The variables available are:
 | INFLUX_DB_BUCKET | speedtests | |
 | INFLUX_DB_TOKEN | {blank} | required |
 | INFLUX_DB_TAGS | None | See tag options below, '\*' widcard for all |
-| SPEEDTEST_INTERVAL | 5 | in minutes |
+| SPEEDTEST_INTERVAL | 180 | in minutes |
 | SPEEDTEST_SERVER_ID | {blank} | id from [Speedtest Static Servers](https://c.speedtest.net/speedtest-servers-static.php) |
-| PING_INTERVAL | 5 | in seconds |
+| PING_INTERVAL | 120 | in seconds |
 | PING_TARGETS | 1.1.1.1, 8.8.8.8 | csv list of hosts to ping |
 
 ### Variable Notes

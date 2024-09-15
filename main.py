@@ -21,11 +21,11 @@ PING_TARGETS = os.getenv("PING_TARGETS", "1.1.1.1, 8.8.8.8")
 
 # Speedtest Settings
 # Time between tests (in minutes, converts to seconds).
-TEST_INTERVAL = int(os.getenv("SPEEDTEST_INTERVAL", "5")) * 60
+TEST_INTERVAL = int(os.getenv("SPEEDTEST_INTERVAL", "180")) * 60
 # Specific server ID
 SERVER_ID = os.getenv("SPEEDTEST_SERVER_ID", "")
 # Time between ping tests (in seconds).
-PING_INTERVAL = int(os.getenv("PING_INTERVAL", "5"))
+PING_INTERVAL = int(os.getenv("PING_INTERVAL", "120"))
 
 client = InfluxDBClient(
     url=f"{DB_ADDRESS}:{DB_PORT}", token=f"{DB_TOKEN}", org=f"{DB_ORG}"
