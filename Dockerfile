@@ -19,8 +19,9 @@ RUN rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
+# Install python modules
 ADD requirements.txt .
-
+RUN pip install --no-cache --upgrade pip
 RUN pip install --no-cache -r requirements.txt
 
 # Final setup & execution
