@@ -34,18 +34,20 @@ The InfluxDB connection settings are controlled by environment variables.
 
 The variables available are:
 
-- NAMESPACE = default - None
-- INFLUX_DB_ADDRESS = default - influxdb
-- INFLUX_DB_PORT = default - 8086
-- INFLUX_DB_ORG = default - {blank}
-- INFLUX_DB_TOKEN = default - {blank}
-- INFLUX_DB_DATABASE = default - speedtests
-- INFLUX_DB_TAGS = default - None *See below for options, '\*' widcard for all*
-- SPEEDTEST_INTERVAL = default - 5 (minutes)
-- SPEEDTEST_FAIL_INTERVAL = default 5 (minutes)
-- SPEEDTEST_SERVER_ID = default - {blank} *id from [Speedtest Static Servers](https://c.speedtest.net/speedtest-servers-static.php)*
-- PING_INTERVAL = default - 5 (seconds)
-- PING_TARGETS = default - 1.1.1.1, 8.8.8.8 (csv of hosts to ping)
+| Variable | Default | Description |
+|- |- |- |
+| NAMESPACE | None | |
+| INFLUX_DB_ADDRESS | influxdb | |
+| INFLUX_DB_PORT | 8086 | |
+| INFLUX_DB_ORG | {blank} | |
+| INFLUX_DB_TOKEN | {blank} | |
+| INFLUX_DB_DATABASE | speedtests | |
+| INFLUX_DB_TAGS | None | See tag options below, '\*' widcard for all |
+| SPEEDTEST_INTERVAL | 5 | in minutes |
+| SPEEDTEST_FAIL_INTERVAL | 5 | in minutes |
+| SPEEDTEST_SERVER_ID | {blank} | id from [Speedtest Static Servers](https://c.speedtest.net/speedtest-servers-static.php) |
+| PING_INTERVAL | 5 | in seconds |
+| PING_TARGETS | 1.1.1.1, 8.8.8.8 | (csv of hosts to ping) |
 
 ### Variable Notes
 
