@@ -1,7 +1,7 @@
 services:
     speedtest:
       build: .
-      image: speedtests:latest
+      image: speedtests
       # image: ghcr.io/wwhitaker/speedtests:latest
       restart: unless-stopped
       environment:
