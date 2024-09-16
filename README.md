@@ -1,6 +1,6 @@
 # Speedtest to InfluxDB v2.0
 
-This is a Python script that will continuously run the official Speedtest CLI application by Ookla, takes input from environment variables, formats data and writes it to an InfluxDB database.
+This is a Python script that will continuously run the official [Speedtest CLI](https://www.speedtest.net/apps/cli) application by Ookla, taking input from environment variables, formatting data and writing it to an InfluxDB database.
 
 This script will allow you to measure your internet connections speed and consistency over time. It uses env variables as configuration. It's as easy to use as telling your Docker server a 1 line command and you'll be set. Using Grafana you can start exploring this data easily.
 
@@ -8,7 +8,7 @@ This repository contains an InfluxQA based Grafana dashboard `GrafanaDash-SpeedT
 
 ![GrafanaDashboard](https://user-images.githubusercontent.com/945191/105287048-46f52a80-5b6c-11eb-9e57-038d63b67efb.png)
 
-There are some added features to allow some additional details that Ookla provides as tags on your data. Some examples are your current ISP, the interface being used, the server who hosted the test. Overtime, you could identify if some serers are performing better than others.
+There are some added features to allow some additional details that Ookla provides as tags on your data. Some examples are your current ISP, the interface being used, the server who hosted the test. Overtime, you could identify if some servers are performing better than others.
 
 ## Acknowledgements
 
@@ -42,7 +42,7 @@ The variables available are:
 | INFLUX_DB_ORG | {blank} | required |
 | INFLUX_DB_BUCKET | speedtests | |
 | INFLUX_DB_TOKEN | {blank} | required |
-| INFLUX_DB_TAGS | None | See tag options below, '\*' widcard for all |
+| INFLUX_DB_TAGS | None | See tag options below, '\*' wildcard for all |
 | SPEEDTEST_INTERVAL | 180 | in minutes |
 | SPEEDTEST_SERVER_ID | {blank} | id from [Speedtest Static Servers](https://c.speedtest.net/speedtest-servers-static.php) |
 | PING_INTERVAL | 120 | in seconds |
@@ -80,7 +80,7 @@ The Ookla speedtest app provides a nice set of data beyond the upload and downlo
 
 Be aware that this script will automatically accept the license and GDPR statement so that it can run non-interactively. Make sure you agree with them before running.
 
-## Docker
+## Running the container
 
 The container image is available through GitHub Containers.  Builds for amd64 and arm64 are included.
 
@@ -88,7 +88,9 @@ The container image is available through GitHub Containers.  Builds for amd64 an
 docker pull ghcr.io/wwhitaker/speedtests:latest
 ```
 
-## Docker Compose
+### Docker Compose
+
+The repository includes a docker compose file to build and run the container locally if desired.
 
 1. Configure the supplied `docker-compose.yml` file environment variables
 2. Run `docker-compose up -d` to build the stack
