@@ -1,6 +1,6 @@
-# Speedtest to InfluxDB v2.0
+# Speedtest to InfluxDB v2
 
-This is a Python script that will continuously run the official [Speedtest CLI](https://www.speedtest.net/apps/cli) application by Ookla, taking input from environment variables, formatting data and writing it to an InfluxDB database.
+This is a Python script that will continuously run the official [Speedtest CLI](https://www.speedtest.net/apps/cli) application by Ookla, taking input from environment variables, formatting data and writing it to an InfluxDB v2 database.
 
 This script will allow you to measure your internet connections speed and consistency over time. It uses env variables as configuration. It's as easy to use as telling your Docker server a 1 line command and you'll be set. Using Grafana you can start exploring this data easily.
 
