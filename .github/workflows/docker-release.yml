@@ -26,7 +26,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       # https://github.com/docker/setup-qemu-action
       - name: Set up QEMU
@@ -47,6 +47,7 @@ jobs:
       # This step uses [docker/metadata-action](https://github.com/docker/metadata-action#about) to extract tags and labels that will be applied to the specified image. The `id` "meta" allows the output of this step to be referenced in a subsequent step. The `images` value provides the base name for the tags and labels.
       # Tag behavior:
       # - Release v1.2.3 -> 1.2.3, 1.2, 1, latest
+      # - Release v1.2 -> 1.2, 1, latest
       # - Release v0.4.2 -> 0.4.2, 0.4
       # - Prerelease v2.0.0-beta.1 -> 2.0.0-beta.1
       # - Manual workflow_dispatch -> current branch name only
@@ -55,12 +56,11 @@ jobs:
         uses: docker/metadata-action@v6
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          flavor: |
-            latest=auto
           tags: |
-            type=semver,pattern={{version}},value=${{ github.event.release.tag_name }},enable=${{ github.event_name == 'release' }}
-            type=semver,pattern={{major}}.{{minor}},value=${{ github.event.release.tag_name }},enable=${{ github.event_name == 'release' }}
-            type=semver,pattern={{major}},value=${{ github.event.release.tag_name }},enable=${{ github.event_name == 'release' && !startsWith(github.event.release.tag_name, 'v0.') && !startsWith(github.event.release.tag_name, '0.') }}
+            type=match,pattern=v?(\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)?),group=1,value=${{ github.event.release.tag_name }},enable=${{ github.event_name == 'release' }}
+            type=match,pattern=v?(\d+\.\d+),group=1,value=${{ github.event.release.tag_name }},enable=${{ github.event_name == 'release' }}
+            type=match,pattern=v?(\d+),group=1,value=${{ github.event.release.tag_name }},enable=${{ github.event_name == 'release' && !startsWith(github.event.release.tag_name, 'v0.') && !startsWith(github.event.release.tag_name, '0.') }}
+            type=raw,value=latest,enable=${{ github.event_name == 'release' && !github.event.release.prerelease }}
             type=ref,event=branch,enable=${{ github.event_name == 'workflow_dispatch' }}
 
       # This step uses the `docker/build-push-action` action to build the image, based on your repository's `Dockerfile`. If the build succeeds, it pushes the image to GitHub Packages.
@@ -76,7 +76,6 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          outputs: type=image,name=target,annotation-index.org.opencontainers.image.description=Speedtest to InfluxDB2 multi-arch image
       
       # This step generates an artifact attestation for the image, which is an unforgeable statement about where and how it was built. It increases supply chain security for people who consume the image. For more information, see "[AUTOTITLE](/actions/security-guides/using-artifact-attestations-to-establish-provenance-for-builds)." 
       - name: Generate artifact attestation
