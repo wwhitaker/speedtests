@@ -1,6 +1,7 @@
 # Speedtest to InfluxDB v2
 
-[![1](https://ghcr-badge.egpl.dev/wwhitaker/speedtests/tags?trim=major)
+![1](https://ghcr-badge.egpl.dev/wwhitaker/speedtests/latest_tag?trim=major&label=latest)
+![1](https://ghcr-badge.egpl.dev/wwhitaker/speedtests/size)
 
 This is a Python script that will continuously run the official [Speedtest CLI](https://www.speedtest.net/apps/cli) application by Ookla, taking input from environment variables, formatting data and writing it to an InfluxDB v2 database.
 
