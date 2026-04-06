@@ -1007,7 +1007,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Time"
+              "options": "_time"
             },
             "properties": [
               {
@@ -1072,29 +1072,7 @@
             "type": "influxdb",
             "uid": "${datasource}"
           },
-          "query": "from(bucket: \"${bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"download\")\n  |> filter(fn: (r) => r._field == \"bandwidth\")\n  |> filter(fn: (r) => r.namespace =~ /^${namespace:regex}$/)\n  |> max()\n  |> keep(columns: [\"_time\", \"_value\"])\n  |> rename(columns: {_value: \"Down Mbps\"})",
-          "queryType": "flux",
-          "rawQuery": true,
-          "refId": "B",
-          "resultFormat": "table"
-        },
-        {
-          "datasource": {
-            "type": "influxdb",
-            "uid": "${datasource}"
-          },
-          "query": "from(bucket: \"${bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"upload\")\n  |> filter(fn: (r) => r._field == \"bandwidth\")\n  |> filter(fn: (r) => r.namespace =~ /^${namespace:regex}$/)\n  |> keep(columns: [\"_time\", \"_value\", \"speedtest_url\"])\n  |> rename(columns: {_value: \"Up Mbps\"})",
-          "queryType": "flux",
-          "rawQuery": true,
-          "refId": "C",
-          "resultFormat": "table"
-        },
-        {
-          "datasource": {
-            "type": "influxdb",
-            "uid": "${datasource}"
-          },
-          "query": "from(bucket: \"${bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"ping\")\n  |> filter(fn: (r) => r._field == \"latency\" or r._field == \"jitter\")\n  |> filter(fn: (r) => r.namespace =~ /^${namespace:regex}$/)\n  |> pivot(rowKey: [\"_time\", \"speedtest_url\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n  |> rename(columns: {latency: \"Latency ms\", jitter: \"Jitter ms\"})",
+          "query": "from(bucket: \"${bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"speeds\")\n  |> filter(fn: (r) => r._field == \"bandwidth_down\" or r._field == \"bandwidth_up\" or r._field == \"latency\" or r._field == \"jitter\")\n  |> filter(fn: (r) => r.namespace =~ /^${namespace:regex}$/)\n  |> pivot(rowKey: [\"_time\", \"speedtest_url\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n  |> rename(columns: {_time: \"Time\", bandwidth_down: \"Down Mbps\", bandwidth_up: \"Up Mbps\", latency: \"Latency ms\", jitter: \"Jitter ms\"})\n  |> keep(columns: [\"Time\", \"Down Mbps\", \"Up Mbps\", \"Latency ms\", \"Jitter ms\"])\n  |> group()\n  |> sort(columns: [\"Down Mbps\", \"Time\"], desc: true)\n  |> limit(n: 1)",
           "queryType": "flux",
           "rawQuery": true,
           "refId": "A",
@@ -1104,37 +1082,19 @@
       "title": "",
       "transformations": [
         {
-          "id": "merge",
-          "options": {}
-        },
-        {
-          "id": "reduce",
-          "options": {
-            "includeTimeField": true,
-            "mode": "reduceFields",
-            "reducers": [
-              "firstNotNull"
-            ]
-          }
-        },
-        {
           "id": "organize",
           "options": {
             "excludeByName": {
               "Time": false
             },
             "indexByName": {
-              "Down Mbps": 2,
-              "Jitter ms": 5,
-              "Latency ms": 4,
-              "Time": 0,
-              "Up Mbps": 3,
-              "speedtest_url": 1
+              "Down Mbps": 0,
+              "Up Mbps": 1,
+              "Latency ms": 2,
+              "Jitter ms": 3,
+              "Time": 4
             },
-            "renameByName": {
-              "Down Mbps": "",
-              "speedtest_url": "SPEEDTEST.net URL"
-            }
+            "renameByName": {}
           }
         }
       ],
@@ -1173,7 +1133,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Time"
+              "options": "_time"
             },
             "properties": [
               {
@@ -1238,51 +1198,15 @@
             "type": "influxdb",
             "uid": "${datasource}"
           },
-          "query": "from(bucket: \"${bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"ping\")\n  |> filter(fn: (r) => r._field == \"latency\" or r._field == \"jitter\")\n  |> filter(fn: (r) => r.namespace =~ /^${namespace:regex}$/)\n  |> pivot(rowKey: [\"_time\", \"speedtest_url\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n  |> sort(columns: [\"latency\"], desc: false)\n  |> limit(n: 1)\n  |> rename(columns: {latency: \"Latency ms\", jitter: \"Jitter ms\"})",
+          "query": "from(bucket: \"${bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"speeds\")\n  |> filter(fn: (r) => r._field == \"bandwidth_down\" or r._field == \"bandwidth_up\" or r._field == \"latency\" or r._field == \"jitter\")\n  |> filter(fn: (r) => r.namespace =~ /^${namespace:regex}$/)\n  |> pivot(rowKey: [\"_time\", \"speedtest_url\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n  |> rename(columns: {_time: \"Time\", bandwidth_down: \"Down Mbps\", bandwidth_up: \"Up Mbps\", latency: \"Latency ms\", jitter: \"Jitter ms\"})\n  |> keep(columns: [\"Time\", \"Down Mbps\", \"Up Mbps\", \"Latency ms\", \"Jitter ms\"])\n  |> group()\n  |> sort(columns: [\"Latency ms\", \"Time\"], desc: false)\n  |> limit(n: 1)",
           "queryType": "flux",
           "rawQuery": true,
           "refId": "A",
-          "resultFormat": "table"
-        },
-        {
-          "datasource": {
-            "type": "influxdb",
-            "uid": "${datasource}"
-          },
-          "query": "from(bucket: \"${bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"download\")\n  |> filter(fn: (r) => r._field == \"bandwidth\")\n  |> filter(fn: (r) => r.namespace =~ /^${namespace:regex}$/)\n  |> keep(columns: [\"_time\", \"_value\", \"speedtest_url\"])\n  |> rename(columns: {_value: \"Down Mbps\"})",
-          "queryType": "flux",
-          "rawQuery": true,
-          "refId": "B",
-          "resultFormat": "table"
-        },
-        {
-          "datasource": {
-            "type": "influxdb",
-            "uid": "${datasource}"
-          },
-          "query": "from(bucket: \"${bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"upload\")\n  |> filter(fn: (r) => r._field == \"bandwidth\")\n  |> filter(fn: (r) => r.namespace =~ /^${namespace:regex}$/)\n  |> keep(columns: [\"_time\", \"_value\", \"speedtest_url\"])\n  |> rename(columns: {_value: \"Up Mbps\"})",
-          "queryType": "flux",
-          "rawQuery": true,
-          "refId": "C",
           "resultFormat": "table"
         }
       ],
       "title": "",
       "transformations": [
-        {
-          "id": "merge",
-          "options": {}
-        },
-        {
-          "id": "reduce",
-          "options": {
-            "includeTimeField": true,
-            "mode": "reduceFields",
-            "reducers": [
-              "firstNotNull"
-            ]
-          }
-        },
         {
           "id": "organize",
           "options": {
@@ -1290,17 +1214,13 @@
               "Time": false
             },
             "indexByName": {
-              "Down Mbps": 2,
-              "Jitter ms": 5,
-              "Latency ms": 4,
-              "Time": 0,
-              "Up Mbps": 3,
-              "speedtest_url": 1
+              "Down Mbps": 0,
+              "Up Mbps": 1,
+              "Latency ms": 2,
+              "Jitter ms": 3,
+              "Time": 4
             },
-            "renameByName": {
-              "Down Mbps": "",
-              "speedtest_url": "SPEEDTEST.net URL"
-            }
+            "renameByName": {}
           }
         }
       ],
@@ -1339,7 +1259,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Time"
+              "options": "_time"
             },
             "properties": [
               {
@@ -1404,29 +1324,7 @@
             "type": "influxdb",
             "uid": "${datasource}"
           },
-          "query": "from(bucket: \"${bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"download\")\n  |> filter(fn: (r) => r._field == \"bandwidth\")\n  |> filter(fn: (r) => r.namespace =~ /^${namespace:regex}$/)\n  |> min()\n  |> keep(columns: [\"_time\", \"_value\"])\n  |> rename(columns: {_value: \"Down Mbps\"})",
-          "queryType": "flux",
-          "rawQuery": true,
-          "refId": "B",
-          "resultFormat": "table"
-        },
-        {
-          "datasource": {
-            "type": "influxdb",
-            "uid": "${datasource}"
-          },
-          "query": "from(bucket: \"${bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"upload\")\n  |> filter(fn: (r) => r._field == \"bandwidth\")\n  |> filter(fn: (r) => r.namespace =~ /^${namespace:regex}$/)\n  |> keep(columns: [\"_time\", \"_value\", \"speedtest_url\"])\n  |> rename(columns: {_value: \"Up Mbps\"})",
-          "queryType": "flux",
-          "rawQuery": true,
-          "refId": "C",
-          "resultFormat": "table"
-        },
-        {
-          "datasource": {
-            "type": "influxdb",
-            "uid": "${datasource}"
-          },
-          "query": "from(bucket: \"${bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"ping\")\n  |> filter(fn: (r) => r._field == \"latency\" or r._field == \"jitter\")\n  |> filter(fn: (r) => r.namespace =~ /^${namespace:regex}$/)\n  |> pivot(rowKey: [\"_time\", \"speedtest_url\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n  |> rename(columns: {latency: \"Latency ms\", jitter: \"Jitter ms\"})",
+          "query": "from(bucket: \"${bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"speeds\")\n  |> filter(fn: (r) => r._field == \"bandwidth_down\" or r._field == \"bandwidth_up\" or r._field == \"latency\" or r._field == \"jitter\")\n  |> filter(fn: (r) => r.namespace =~ /^${namespace:regex}$/)\n  |> pivot(rowKey: [\"_time\", \"speedtest_url\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n  |> rename(columns: {_time: \"Time\", bandwidth_down: \"Down Mbps\", bandwidth_up: \"Up Mbps\", latency: \"Latency ms\", jitter: \"Jitter ms\"})\n  |> keep(columns: [\"Time\", \"Down Mbps\", \"Up Mbps\", \"Latency ms\", \"Jitter ms\"])\n  |> group()\n  |> sort(columns: [\"Down Mbps\", \"Time\"], desc: false)\n  |> limit(n: 1)",
           "queryType": "flux",
           "rawQuery": true,
           "refId": "A",
@@ -1436,37 +1334,19 @@
       "title": "",
       "transformations": [
         {
-          "id": "merge",
-          "options": {}
-        },
-        {
-          "id": "reduce",
-          "options": {
-            "includeTimeField": true,
-            "mode": "reduceFields",
-            "reducers": [
-              "firstNotNull"
-            ]
-          }
-        },
-        {
           "id": "organize",
           "options": {
             "excludeByName": {
               "Time": false
             },
             "indexByName": {
-              "Down Mbps": 2,
-              "Jitter ms": 5,
-              "Latency ms": 4,
-              "Time": 0,
-              "Up Mbps": 3,
-              "speedtest_url": 1
+              "Down Mbps": 0,
+              "Up Mbps": 1,
+              "Latency ms": 2,
+              "Jitter ms": 3,
+              "Time": 4
             },
-            "renameByName": {
-              "Down Mbps": "",
-              "speedtest_url": "SPEEDTEST.net URL"
-            }
+            "renameByName": {}
           }
         }
       ],
@@ -1505,7 +1385,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Time"
+              "options": "_time"
             },
             "properties": [
               {
@@ -1570,51 +1450,15 @@
             "type": "influxdb",
             "uid": "${datasource}"
           },
-          "query": "from(bucket: \"${bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"ping\")\n  |> filter(fn: (r) => r._field == \"latency\" or r._field == \"jitter\")\n  |> filter(fn: (r) => r.namespace =~ /^${namespace:regex}$/)\n  |> pivot(rowKey: [\"_time\", \"speedtest_url\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n  |> sort(columns: [\"latency\"], desc: true)\n  |> limit(n: 1)\n  |> rename(columns: {latency: \"Latency ms\", jitter: \"Jitter ms\"})",
+          "query": "from(bucket: \"${bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"speeds\")\n  |> filter(fn: (r) => r._field == \"bandwidth_down\" or r._field == \"bandwidth_up\" or r._field == \"latency\" or r._field == \"jitter\")\n  |> filter(fn: (r) => r.namespace =~ /^${namespace:regex}$/)\n  |> pivot(rowKey: [\"_time\", \"speedtest_url\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n  |> rename(columns: {_time: \"Time\", bandwidth_down: \"Down Mbps\", bandwidth_up: \"Up Mbps\", latency: \"Latency ms\", jitter: \"Jitter ms\"})\n  |> keep(columns: [\"Time\", \"Down Mbps\", \"Up Mbps\", \"Latency ms\", \"Jitter ms\"])\n  |> group()\n  |> sort(columns: [\"Latency ms\", \"Time\"], desc: true)\n  |> limit(n: 1)",
           "queryType": "flux",
           "rawQuery": true,
           "refId": "A",
-          "resultFormat": "table"
-        },
-        {
-          "datasource": {
-            "type": "influxdb",
-            "uid": "${datasource}"
-          },
-          "query": "from(bucket: \"${bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"download\")\n  |> filter(fn: (r) => r._field == \"bandwidth\")\n  |> filter(fn: (r) => r.namespace =~ /^${namespace:regex}$/)\n  |> keep(columns: [\"_time\", \"_value\", \"speedtest_url\"])\n  |> rename(columns: {_value: \"Down Mbps\"})",
-          "queryType": "flux",
-          "rawQuery": true,
-          "refId": "B",
-          "resultFormat": "table"
-        },
-        {
-          "datasource": {
-            "type": "influxdb",
-            "uid": "${datasource}"
-          },
-          "query": "from(bucket: \"${bucket}\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"upload\")\n  |> filter(fn: (r) => r._field == \"bandwidth\")\n  |> filter(fn: (r) => r.namespace =~ /^${namespace:regex}$/)\n  |> keep(columns: [\"_time\", \"_value\", \"speedtest_url\"])\n  |> rename(columns: {_value: \"Up Mbps\"})",
-          "queryType": "flux",
-          "rawQuery": true,
-          "refId": "C",
           "resultFormat": "table"
         }
       ],
       "title": "",
       "transformations": [
-        {
-          "id": "merge",
-          "options": {}
-        },
-        {
-          "id": "reduce",
-          "options": {
-            "includeTimeField": true,
-            "mode": "reduceFields",
-            "reducers": [
-              "firstNotNull"
-            ]
-          }
-        },
         {
           "id": "organize",
           "options": {
@@ -1622,17 +1466,13 @@
               "Time": false
             },
             "indexByName": {
-              "Down Mbps": 2,
-              "Jitter ms": 5,
-              "Latency ms": 4,
-              "Time": 0,
-              "Up Mbps": 3,
-              "speedtest_url": 1
+              "Down Mbps": 0,
+              "Up Mbps": 1,
+              "Latency ms": 2,
+              "Jitter ms": 3,
+              "Time": 4
             },
-            "renameByName": {
-              "Down Mbps": "",
-              "speedtest_url": "SPEEDTEST.net URL"
-            }
+            "renameByName": {}
           }
         }
       ],
